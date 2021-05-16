@@ -1,0 +1,98 @@
+{{ header }}{{ column_left }}
+
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <!--<button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>-->
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+            <h1>{{ heading_title }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-pencil"></i> Export/Import</h3>
+            </div>
+            <div class="panel-body">
+			
+				<ul class="nav nav-tabs">
+				  <li class="active"><a href="#tab-modul" data-toggle="tab">Импорт/Экспорт</a></li>
+				  <li><a href="#tab-help" data-toggle="tab">О модуле</a></li>
+				</ul>
+				
+				<div class="tab-content">
+				
+					<div class="tab-pane active" id="tab-modul">
+						<div id="export_import">
+							<div class="form-group row">
+								<label class="col-sm-4 control-label">Выгрузить файл</label>
+								<div class="col-sm-8">
+									<button id="button_export" class="btn btn-primary"><i class="fa fa-download"></i> Export</button>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-4 control-label">Загрузить файл</label>
+								<div class="col-sm-8">
+									<label><input id="import_file" type="file"><span id="button_import" class="btn btn-danger"><i class="fa fa-upload"></i> Import</span></label>
+									<span id="button_import_local" class="btn btn-danger"><i class="fa fa-upload"></i> Import local</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<div id="export_import_progress">
+									<div id="export_import_progress_wrapper"></div>
+								</div>
+							</div>
+							<div id="loading" style="display: none">
+								<p class="text-center" style="font-size: 24px"><i class="fa fa-refresh fa-spin"></i></p>
+							</div>
+							<div class="form-group">
+								<div id="export_import_logs">
+
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="tab-pane" id="tab-help">
+					
+					<div class="alert alert-danger">
+					<i class="fa fa-info-circle"></i> 
+					Модуль работает с данными вашего магазина! Во время импорта всегда может пойти что то не так.
+					Поэтому, настоятельно рекомендую делать резервную копию БД перед использованием модуля. Бекап можно сделать перейдя по ссылке
+					<a href="{{ backup_link }}" class="alert-link" target="_blank"> Бэкап / Восстановление</a>! <br>
+					Модуль разрешено использовать только в личных целях!
+					</div>
+					
+					<div class="alert alert-info">
+					<b>CSV Export/Import Light (Модуль импорта и экспорта данных формата csv)</b> v.{{ vers }}
+					<a href="https://shop.opencart-russia.ru/csv-export-import-light" target="_blank"><b>&nbsp;&nbsp;Скачать текущую версию модуля</b></a><br>
+					</div>
+					
+					<div class="well">
+					<b>Благодарности</b> куда без них :)
+					Так получилось, что затраты на разработку данного модуля были погашены участниками ресурса
+					<a href="http://forum.opencart-russia.ru/" target="_blank">Русское сообщество OpenCart </a>.
+					Поэтому я просто обязан сказать им спасибо и дать небольшую информацию ;) <br><br>
+					
+					<a href="https://shop.opencart-russia.ru/ravilr" target="_blank"><b>Ravilr</b></a> - Модули и услуги по OpenCart<br>
+					<a href="http://forum.opencart-russia.ru/members/3/" target="_blank"><b>Vlad</b></a>  - Платная помощь в создании магазина на OpenCart<br>
+					<a href="https://shop.opencart-russia.ru/parsing-opencart-magazin" target="_blank"><b>Importer</b></a>  - Парсинг сайтов и импорт в OpenCart<br>
+					и другие участники <a href="http://forum.opencart-russia.ru/" target="_blank"><b>форума</b></a> (Karpov, Ален, Vitali, Bmkz), которые решили, что не нужно их рекламировать :) но им огромное СПАСИБО!
+					</div>
+					
+					</div>
+					
+				</div>
+				
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ footer }}

@@ -1,0 +1,163 @@
+
+
+<!-- Facebook Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '740479940071376');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=740479940071376&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Facebook Pixel Code -->
+<nav id="top">
+  <div class="container">
+    <div class="box-inner">
+{#		<ul class="box-top box-top-left pull-left">#}
+{#			<li><a href="{{ contact }}"><i class="fa fa-phone"></i> <span class="hidden-xs hidden-sm hidden-md">{{ telephone }}</span></a></li>#}
+{#			{% if header_cart %}#}
+{#				<li><a href="{{ shopping_cart }}" title="{{ text_shopping_cart }}"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs hidden-sm hidden-md">{{ text_shopping_cart }}</span></a></li>#}
+{#				<li><a href="{{ checkout }}" title="{{ text_checkout }}"><i class="fa fa-share"></i> <span class="hidden-xs hidden-sm hidden-md">{{ text_checkout }}</span></a></li>#}
+{#			{% endif %} #}
+{#			<li class="language">#}
+{#			{{ language }}#}
+{#			</li>#}
+{#			<li class="currency">#}
+{#			{% if header_currency %}#}
+{#			  {{ currency }}#}
+{#			{% endif %}#}
+{#			</li>#}
+{#		</ul>#}
+
+
+
+
+		<div class="col-header-text"  style="">
+			<a href="tel:0684529646">(068)452-96-46</a>
+			<a href="tel:0952506003">(095)250-60-03</a>
+			<a id="go" rel="leanModal" name="signup" href="#signup" class="modal-open">Заказать обратный звонок</a>
+			<a href="https://www.google.com/maps?q=47%C2%B051%2756.6,35%C2%B006%2718.7&hl=ru-ru&t=m&z=15" target="_blank">Где мы находимся</a>
+		</div>
+		<div class="col-search">{{ search }}</div>
+		{% if header_cart %}{{ cart }}{% endif %}
+
+
+
+
+
+
+	</div>
+  </div>
+</nav>
+
+<header class="scroll-fix">
+	<div class="scroll-fix-container">
+		<div class="container">
+			<div class="box-inner">
+				<div class="box-inner-inner">
+					<div class="row">
+
+
+						<div class="col-md-6 col-sm-6 col-lg-6 col-sms-6">
+							{{ position3 }}
+							<div id="logo">
+							{% if logo %}<a href="{{ home }}"><img src="{{ logo }}" title="{{ name }}" alt="{{ name }}" class="img-responsive" /></a>{% else %}
+							  <h1><a href="{{ home }}">{{ name }}</a></h1>
+							  {% endif %}
+							</div>
+						</div>
+
+
+
+
+{#						<div class="col-md-4 col-sm-4 col-lg-4 col-sms-12">#}
+{#							#}
+{#							<div class="col-header-text">{{ header_text }} <br>#}
+{#							<a id="go" rel="leanModal" name="signup" href="#signup" class="modal-open">Заказать обратный звонок</a> <br>#}
+{#							<a href="https://www.google.com/maps?q=47%C2%B051%2756.6,35%C2%B006%2718.7&hl=ru-ru&t=m&z=15" target="_blank">Где мы находимся</a>#}
+{#							</div>#}
+{#						</div>#}
+						<script type="text/javascript">$(function(){
+	function showModal(id){
+		$(document.body).addClass('is-open-modal');
+		$(id).addClass('is-open');
+		console.log(id);
+	}
+	function hideModals(){
+		$(document.body).removeClass('is-open-modal');
+		$('.modal').removeClass('is-open');
+	}
+
+	$(".modal-open").on('click', function(e){
+		console.log(e);
+		showModal('#modal1');
+ });
+	
+	$(document).on('click', function(e){
+		if (!(
+		($(e.target).parents('.dialog').length)
+		||	($(e.target).hasClass('dialog'))
+		||	($(e.target).hasClass('modal-open')))
+		) {
+			hideModals();
+		}
+	});
+	
+});</script>
+
+
+						<div class="col-md-6 col-sm-6 col-lg-6 col-sms-6" style="float: right;">
+							<div class="col-cart">
+
+								<div class="right-header" style="">
+									<a href="/index.php?route=product/category&path=491">Товары с кешбеком</a>
+									<a href="/?route=product/special">Акции</a>
+									<a href="/index.php?route=product/category&path=490">Новинки</a>
+									{% if logged %}
+										<a style="display: inline-grid;" id="pt-logout-link" href="{{ account }}">{{ text_account }}</a> / <a style="display: inline-grid;"id="pt-logout-link" href="{{ logout }}">{{ text_logout }}</a>
+									{% else %}
+									<a style="display: inline-grid;" href="/index.php?route=account/register">{{ text_register }}</a> / <a style="display: inline-grid;"id="" href="/index.php?route=account/login">{{ text_login }}</a>
+									{% endif %}
+
+
+								</div>
+{#								<li id="top-links" class="nav header-dropdown">#}
+{#								  <ul class="list-inline">#}
+{#									<li class="dropdown">#}
+{#										{% if logged %}#}
+{#											<li><a id="pt-logout-link" href="{{ account }}">{{ text_account }}</a></li>#}
+{#											<li><a id="pt-logout-link" href="{{ logout }}">{{ text_logout }}</a></li>#}
+{#										{% else %}#}
+{#									<a id="" href="/index.php?route=account/register">{{ text_register }}</a> / <a id="" href="/index.php?route=account/login">{{ text_login }}</a> #}{#register pt-register-link#}{##}{#login pt-login-link#}
+{#									{% endif %}#}
+{#									</li>#}
+{#								  </ul>#}
+{#								</li>#}
+
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="top-menu visible-lg">
+		<div class="container">
+			<div class="container-inner">
+				<div class="col-ver">{{ position1 }}</div>
+				<div class="col-hoz">{{ position2 }}</div>
+			</div>
+		</div>
+	</div>
+
+
+</header>

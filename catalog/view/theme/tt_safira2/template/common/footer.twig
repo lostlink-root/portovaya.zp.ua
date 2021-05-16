@@ -1,0 +1,178 @@
+<footer>
+	<div class="footer-links">  
+	  <div class="container">
+		<div class="inner">	
+			<div class="row">
+			  <div class="col col-md-3 col-sm-12">
+				<div class="btn-group">
+					<h5 data-toggle="dropdown" class="dropdown-toggle visible-xs">{{ text_contact }}<i class="visible-xs ion-chevron-down"></i></h5>
+					<div class="dropdown-menu footer-content">
+						<div class="logo-footer"><a href="#"><img src="catalog/view/theme/tt_safira1/image/logo-footer.png" alt=""></a></div>
+						<p class="description-footer">{{ text_description_footer }}</p>
+						<p><span>{{ text_address }}</span>{{ address }}</p>
+						<p><span>{{ text_email }}</span>torg.sklad.portovaya@gmail.com</p>
+						<p><span>{{ text_phone }}</span>{{ telephone }}</p>
+						<p><a href="{{ contact }}">{{ text_contact }}</a></p>
+					</div>
+				</div>
+			  </div>
+			  <div class="col col-md-7 col-sm-12">
+				  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1300.2390804156537!2d35.10552921181608!3d47.865200780768646!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDfCsDUxJzU2LjciTiAzNcKwMDYnMTguOCJF!5e0!3m2!1sru!2smv!4v1606406866247!5m2!1sru!2smv" width="100%" height="150" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0" zoom="1"></iframe>
+			  </div>
+{#			  <div class="col col-md-2 col-sm-6"> third#}
+{#				<div class="btn-group">#}
+{#					<h5 data-toggle="dropdown" class="dropdown-toggle">{{ text_extra }}<i class="visible-xs ion-chevron-down"></i></h5>#}
+{#					<div class="dropdown-menu">#}
+{#						<ul class="list-unstyled">#}
+{#						  <li><a href="{{ manufacturer }}">{{ text_manufacturer }}</a></li>#}
+{#						 <!--  <li><a href="{{ voucher }}">{{ text_voucher }}</a></li> -->#}
+{#						  <!-- <li><a href="{{ affiliate }}">{{ text_affiliate }}</a></li> -->#}
+
+{#						  <!-- <li><a href="{{ return }}">{{ text_return }}</a></li> -->#}
+{#						  <!-- <li><a href="{{ order }}">{{ text_order }}</a></li> -->#}
+{#						</ul>#}
+{#					</div>#}
+{#				</div>#}
+{#			  </div>#}
+			   <div class="col col-md-2 col-sm-12">
+{#				<div class="btn-group">#}
+{#					<h5 data-toggle="dropdown" class="dropdown-toggle">{{ text_signup_newsletter }}<i class="visible-xs ion-chevron-down"></i></h5>#}
+{#					<div class="dropdown-menu">#}
+{#						<ul class="list-unstyled">#}
+{#							{{ position5 }}#}
+{#						</ul>#}
+{#                        #}
+{#					</div>#}
+{#				</div>#}
+
+
+				   <div class="btn-group">
+					   {#					<h5 data-toggle="dropdown" class="dropdown-toggle">{{ text_information }}<i class="visible-xs ion-chevron-down"></i></h5>#}
+					   <div class="dropdown-menu footer-content footer-information">
+						   <ul class="list-unstyled">
+							   {% if informations %}
+								   {% for information in informations %}
+									   <li><a href="{{ information.href }}">{{ information.title }}</a></li>
+								   {% endfor %}
+							   {% endif %}
+
+							   <li><a href="{{ sitemap }}">{{ text_sitemap }}</a></li>
+							   <li><a href="{{ special }}">{{ text_special }}</a></li>
+						   </ul>
+					   </div>
+				   </div>
+			  </div>
+			</div>
+		</div>
+	  </div>
+	</div>
+	<div class="footer-bottom">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 col-sm-12">
+					<div class="footer-copyright">
+						<p class="text-powered" style="float:left;">{{ powered }}</p>
+                        <p style="float:right;">
+                            <a href="https://instagram.com/sklad.portovaya.zp" target="_blank">
+                                <img src="/image/logo/instagram-icon.png" style="width:30px; background:#fff;border-radius: 10px;">
+                            </a>
+                            <a href="https://www.facebook.com/sklad.portovaya/" target="_blank">
+                                <img src="/image/logo/facebook-icon.png" style="width: 28px; background:#fff;border-radius: 10px;">
+                            </a>
+							<a href="viber://chat?number=%2B380684529646" target="_blank">
+                                <img src="/image/catalog/viber.png" style="width: 28px; background:none;border-radius: 10px;">
+                            </a>
+							<a href="https://t.me/sklad_portovaya" target="_blank">
+                                <img src="/image/logo/telegram-icon.png" style="width: 28px; background:none;border-radius: 10px;">
+                            </a>
+                        </p>
+					</div>
+				</div>
+				<div class="col-md-6 col-sm-12">
+					{{ position6 }}
+				</div>
+			</div>
+		</div>
+	</div>
+</footer>
+{% for script in scripts %}
+<script src="{{ script }}" type="text/javascript"></script>
+{% endfor %}
+
+</div>
+
+
+
+
+
+
+
+
+
+
+<div id="modal1" class="modal">
+<div id="signup-ct" class="dialog">
+ <div id="signup-header">
+  <h2>Обратный звонок</h2>
+  <a class="modal_close" href="#"></a>
+</div>
+ 
+<form action="/catalog/controller/othermail/options.php" method="post">
+
+ <input type="text" name="fio" width="20" placeholder="Ваше имя:">
+
+ <input type="text" name="email" width="20" placeholder="Номер телефона:">
+
+ <input type="text" name="ask" width="20" placeholder="Тема вопроса:   ">
+<!-- <p><span style="padding-right:10px;">Введите числа с картинки: </span> 
+<?php
+        // $i=1;
+        // do
+        // {
+        // $num[$i] = mt_rand(0,9);
+        // echo "<img src='img/".$num[$i].".gif' border='0' align='bottom' vspace='5px'>";
+        // $i++;
+        // }
+        // while ($i<5);
+        // $captcha = $num[1].$num[2].$num[3].$num[4];
+?>
+ <input name="captcha" type="hidden" value="<?php //echo $captcha ;?>">
+<input name="pr" style=" margin-bottom:11px" type="text" size="6" maxlength="4"></p> -->
+<p class="submit-button"><input type="submit" class="bt1" value="Отправить сообщение"></p>
+</form>
+            </div>
+</div>
+
+
+
+<script type="text/javascript">$(function(){
+	function showModal(id){
+		$(document.body).addClass('is-open-modal');
+		$(id).addClass('is-open');
+		console.log(id);
+	}
+	function hideModals(){
+		$(document.body).removeClass('is-open-modal');
+		$('.modal').removeClass('is-open');
+	}
+
+	$(".modal-open").on('click', function(e){
+		console.log(e);
+		showModal('#modal1');
+ });
+	
+	$(document).on('click', function(e){
+		if (!(
+		($(e.target).parents('.dialog').length)
+		||	($(e.target).hasClass('dialog'))
+		||	($(e.target).hasClass('modal-open')))
+		) {
+			hideModals();
+		}
+	});
+	
+});</script>
+
+
+
+</body></html>

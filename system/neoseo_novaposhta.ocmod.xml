@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <name>NeoSeo Novaposhta</name>
+    <version>18</version>
+    <code>neoseo-novaposhta</code>
+    <author>NeoSeo</author>
+    <link>http://neoseo.com.ua/neoseo-novaposhta</link>
+
+    <file path="admin/controller/localisation/country.php">
+        <operation>
+            <search><![CDATA[if ($country_info) {]]></search>
+            <add position="after" offset="1"><![CDATA[			/* NEOSEO NovaPoshta BEGIN */
+			if($this->config->get('neoseo_novaposhta_status') == 1 && isset($country_info['iso_code_3']) && $country_info['iso_code_3'] == 'UKR'){
+				$this->load->model('tool/neoseo_novaposhta');
+				$zone = $this->model_tool_neoseo_novaposhta->getZones($this->request->get['country_id']);
+			} else {
+				$zone = $this->model_localisation_zone->getZonesByCountryId($this->request->get['country_id']);
+			}
+			/* NEOSEO NovaPoshta END */]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA['zone'              => $this->model_localisation_zone->getZonesByCountryId($this->request->get['country_id']),]]></search>
+            <add position="replace"><![CDATA[
+				/* NEOSEO NovaPoshta BEGIN */
+				'zone'              => $zone,
+				/* NEOSEO NovaPoshta END */]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/controller/sale/order.php">
+        <operation>
+            <search><![CDATA[$data['shipping_code'] = $order_info['shipping_code'];]]></search>
+            <add position="after"><![CDATA[
+			/* NEOSEO Novaposhta BEGIN */
+			$data['novaposhta_status'] = $this->config->get('neoseo_novaposhta_status');
+			if ($data['novaposhta_status'] == 1) {
+				$shipping_method =$data['shipping_code'];
+				$shipping_method = explode('.', $shipping_method);
+				if (!empty($shipping_method[1]) && $shipping_method[0] == 'neoseo_novaposhta') {
+					$this->load->model('tool/neoseo_novaposhta');
+					$this->session->data['neoseo_novaposhta']['city'] = $data['shipping_custom_field']['np_city'];
+					if($shipping_method[1] == 'courier_delivery'){
+						$this->session->data['neoseo_novaposhta']['courier_address'] = $data['shipping_custom_field']['np_address'];
+						$this->session->data['neoseo_novaposhta']['courier_address'] = $data['shipping_address_1'];
+					}
+
+					if($shipping_method[1] == 'warehouse_delivery'){
+						$this->session->data['neoseo_novaposhta']['warehouse'] = $data['shipping_custom_field']['np_warehouse'];
+						$data['warehouse_selector'] = $this->model_tool_neoseo_novaposhta->getWarehouses($data['shipping_custom_field']['np_city']);
+					}
+				}
+			}
+			/* NEOSEO Novaposhta END */]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[$this->response->setOutput($this->load->view('sale/order_info', $data));]]></search>
+            <add position="before"><![CDATA[
+			/* NEOSEO Novaposhta BEGIN */
+			$data['novaposhta_status'] = $this->config->get('neoseo_novaposhta_status');
+			if ($data['novaposhta_status'] == 1) {
+				$shipping_method = explode('.', $order_info['shipping_code']);
+				if($shipping_method[0] == 'neoseo_novaposhta'){
+					$data['method'] = $shipping_method[1];
+					$np_lang = $this->load->language('sale/neoseo_novaposhta');
+					$data['text_check_fio'] = $np_lang['text_check_fio'];
+					$data['text_print_doc'] = $np_lang['text_print_doc'];
+					$data['text_print_mark'] = $np_lang['text_print_mark'];
+					$data['text_delete_ecp'] = $np_lang['text_delete_ecp'];
+					$data['text_ttn'] = $np_lang['text_ttn'];
+					$data['text_confirm'] = $np_lang['text_confirm'];
+					$data['text_status'] = $np_lang['text_status'];
+					$data['text_delivery_date'] = $np_lang['text_delivery_date'];
+					if(isset($this->session->data['np_error_warning'])){
+						$data['np_error_warning'] = $this->session->data['np_error_warning'];
+						unset($this->session->data['np_error_warning']);
+					}
+					$this->load->model('tool/neoseo_novaposhta');
+					$enp = $this->model_tool_neoseo_novaposhta->existEcp($order_id);
+					if(!$enp){
+						$data['np_text'] = $this->language->get('text_create_ecp');
+						$data['np_link'] = $this->url->link('sale/neoseo_novaposhta/createecp&order_id='.$order_info['order_id'], 'user_token=' . $this->session->data['user_token'], 'SSL');
+					} else {
+						$data['enp'] = $enp;
+						$data['np_api_key'] = $this->config->get('neoseo_novaposhta_api_key');
+						$data['refresh_link'] = $this->url->link('sale/neoseo_novaposhta/recheck&order_id='.$order_info['order_id'], 'user_token=' . $this->session->data['user_token'], 'SSL');
+						$data['del_link'] = $this->url->link('sale/neoseo_novaposhta/deleteecp&order_id='.$order_info['order_id'], 'user_token=' . $this->session->data['user_token'], 'SSL');
+					}
+				}
+			}
+			/* NEOSEO Novaposhta END */]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[$this->response->setOutput($this->load->view('sale/order_list', $data));]]></search>
+            <add position="before"><![CDATA[		/* NeoSeo Novaposhta BEGIN */
+		$data['novaposhta_status'] = $this->config->get('neoseo_novaposhta_status');
+		if ($data['novaposhta_status'] == 1) {
+			$this->load->model('tool/neoseo_novaposhta');
+			$data['ttns'] = array();
+			$data['track_all_link'] = $this->url->link('sale/neoseo_novaposhta/trackall', 'user_token=' . $this->session->data['user_token'], 'SSL');
+			$np_lang = $this->load->language('sale/neoseo_novaposhta');
+			$data['text_ttn'] = $np_lang['text_ttn'];
+			$data['text_status'] = $np_lang['text_status'];
+			$data['text_track_all'] = $np_lang['text_track_all'];
+			foreach($data['orders'] as $d_order){
+				//echo "<pre>"; print_r($d_order);exit;
+				$shipping_code = explode(".",$d_order['shipping_code']);
+				if($shipping_code[0] == 'neoseo_novaposhta'){
+					if($ecp = $this->model_tool_neoseo_novaposhta->existEcp($d_order['order_id'])){
+						$data['ttns'][$d_order['order_id']] = $ecp;
+					}
+			}
+		}
+		}
+		/* NeoSeo Novaposhta END */]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/view/template/sale/order_form.twig">
+        <operation>
+            <search><![CDATA[{{ footer }}]]></search>
+            <add position="before"><![CDATA[
+<!-- NEOSEO NovaPoshta BEGIN -->
+{% if novaposhta_status is defined and novaposhta_status == 1 %}
+<script type="text/javascript">
+          $(document).delegate('input[name=\'city\']', 'keydown.autocomplete', function() {
+            if($(this).attr('autocompleted') == 1) return;
+            $(this).attr('autocompleted',1);
+            $(this).autocomplete({
+              'source': function(request, response) {
+                $.ajax({
+                  url: 'index.php?route=extension/shipping/neoseo_novaposhta/cityautocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
+                  dataType: 'json',
+                  success: function(json) {
+                    response($.map(json, function(item) {
+                      return {
+                        label: item['name'],
+                        value: item['id'],
+                      }
+                    }));
+                  },
+                  error: function(xhr, ajaxOptions, thrownError) {
+                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                  }
+                });
+              },
+              'select': function(item) {
+                $(this).val(item['label']);
+                $('#np_city').val(item['value']);
+                $('#np_warehouse').load('index.php?route=extension/shipping/neoseo_novaposhta/warehouseAutocomplete&city_ref=' + item['value'] + '&user_token={{ user_token }}');
+              }
+            });
+          });
+  </script>
+{% endif %}
+<!-- NEOSEO NovaPoshta END -->]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[<input type="text" name="city" value="{{ shipping_city }}" id="input-shipping-city" class="form-control" />]]></search>
+            <add position="after"><![CDATA[
+                  <!-- NEOSEO NovaPoshta BEGIN -->
+                  {% if novaposhta_status is defined and novaposhta_status == 1 %}
+                  <input type="hidden" name="shipping_custom_field[np_city]" value="{% if shipping_custom_field.np_city is defined %}{{ shipping_custom_field.np_city }}{% endif %}" id="np_city">
+                  {% endif %}
+                  <!-- NEOSEO NovaPoshta END -->]]></add>
+        </operation>
+
+        <operation>
+            <search><![CDATA[<input type="text" name="address_1" value="{{ shipping_address_1 }}" id="input-shipping-address-1" class="form-control" />]]></search>
+            <add position="after"><![CDATA[
+                  <!-- NEOSEO NovaPoshta BEGIN -->
+                  {% if novaposhta_status is defined and novaposhta_status == 1 and warehouse_selector is defined %}
+                  <a data-toggle="collapse" data-target="#wh_select" style="cursor:pointer;">{{ entry_address }}</a>
+                  <div id='wh_select' class="collapse">
+                    <select class='form-control' name='shipping_custom_field[np_warehouse]' id="np_warehouse" onclick="$(this).change()" onchange="$('#input-shipping-address-1').val($('#np_warehouse option:selected').text())">
+                      {% for warehouse in warehouse_selector %}
+                        {% if warehouse.ref == shipping_custom_field.np_warehouse %}
+                      <option value="{{ warehouse.ref }}" selected="selected">{{ warehouse.descriptionru }}</option>
+                      {% else %}
+                      <option value="{{ warehouse.ref }}">{{ warehouse.descriptionru }}</option>
+                      {% endif %}
+                      {% endfor %}
+                    </select>
+                  </div>
+                  {% endif %}
+                  <!-- NEOSEO NovaPoshta END -->]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/view/template/sale/order_info.twig">
+        <operation>
+            <search><![CDATA[<td class="text-left">{{ shipping_address }}</td>]]></search>
+            <add position="replace"><![CDATA[
+<!-- NEOSEO NovaPoshta BEGIN -->
+              <td class="text-left">{{ shipping_address }}
+                {% if np_text is defined %}
+                  {% if method == 'courier_delivery' %}
+                    <div class='alert-danger'>{{ text_check_fio }}</div>
+                  {% endif %}
+                  {% if np_error_warning is defined %}
+                    <div class='alert-danger'>{{ np_error_warning }}</div>
+                  {% endif %}
+              <br> <a href="{{ np_link }}" class="btn btn-success"><i class="fa fa-plus"></i>{{ np_text }}</a>
+                {% endif %}
+                  {% if enp is defined %}
+                  <br><a href="https://my.novaposhta.ua/orders/printDocument/orders/{{ enp['ttn'] }}/type/pdf/apiKey/{{ np_api_key }}" target="_blank">{{ text_print_doc }}</a>
+                  <br><a href="https://my.novaposhta.ua/orders/printMarkings/orders/{{ enp['ttn'] }}/type/pdf/apiKey/{{ np_api_key }}" target="_blank">{{ text_print_mark }}</a>
+                  <br><a href="{{ del_link }}" class='btn btn-warning' onclick="return confirm('{{ text_confirm }}')"><i class="fa fa-trash-o"></i> {{ text_delete_ecp }}</a>
+                <div class="info">
+                  <strong>{{ text_ttn }}</strong>: {{ enp['ttn'] }}
+                </div>
+                <div class="warning">
+                  <strong>{{ text_status }}</strong>: {{ enp['status'] }} <a href="{{ refresh_link }}"><i class="fa fa-refresh"></i></a>
+                </div>
+                <div class="info">
+                  <strong>{{ text_delivery_date }}</strong>: {{ enp.estimated_delivery_date }}
+                </div>
+                {% endif %}
+              </td>
+<!-- NEOSEO NovaPoshta END -->]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/view/template/sale/order_list.twig">
+        <operation>
+            <search><![CDATA[<div class="btn-group"> <a href="{{ order.view }}" data-toggle="tooltip" title="{{ button_view }}" class="btn btn-primary"><i class="fa fa-eye"></i></a>]]></search>
+            <add position="before"><![CDATA[
+                  <!-- NEOSEO NovaPoshta BEGIN -->
+                  {% if novaposhta_status is defined and novaposhta_status == 1 %}
+                  {% if ttns[order.order_id] is defined %}
+                  <div style='float: left;border: 1px dashed;padding: 3px;border-radius: 5px;/*max-width: 250px;*/text-align: left;'>
+                    <b>{{ text_ttn }}:</b> {{ ttns[order.order_id].ttn }} <br>
+                    <b>{{ text_status }}:</b> {{ ttns[order.order_id].status }}
+                  </div>
+                 {% endif %}
+                 {% endif %}
+                  <!-- NEOSEO NovaPoshta END -->]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[<button type="submit" id="button-shipping" form="form-order" formaction="{{ shipping }}" formtarget="_blank" data-toggle="tooltip" title="{{ button_shipping_print }}" class="btn btn-info"><i class="fa fa-truck"></i></button>]]></search>
+            <add position="before"><![CDATA[
+                  <!-- NEOSEO NovaPoshta BEGIN -->
+                  {% if novaposhta_status is defined and novaposhta_status == 1 %}
+                  <a href="{{ track_all_link }}" class='btn btn-success'><i class='fa fa-refresh'></i> {{ text_track_all }}</a>
+                  {% endif %}
+                  <!-- NEOSEO NovaPoshta END -->]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/api/shipping.php">
+        <operation>
+        <search><![CDATA[if ((utf8_strlen($this->request->post['city']) < 2) || (utf8_strlen($this->request->post['city']) > 32)) {]]></search>
+        <add position="replace"><![CDATA[
+				/* NEOSEO NovaPoshta BEGIN */
+				if ((utf8_strlen($this->request->post['city']) < 2) || (utf8_strlen($this->request->post['city']) > 128)) {
+				/* NEOSEO NovaPoshta END */]]></add>
+        </operation>
+        <operation>
+        <search><![CDATA[$this->session->data['shipping_address'] = array(]]></search>
+        <add position="before"><![CDATA[
+					/* NEOSEO NovaPoshta BEGIN */
+					if($this->config->get('neoseo_novaposhta_status') == 1 && isset($this->request->post['shipping_custom_field']) && is_array($this->request->post['shipping_custom_field']))
+					{
+						if(isset($this->request->post['zone_id'])){
+							$this->load->model('extension_shipping/neoseo_novaposhta');
+							$np_zone = $this->model_extension_shipping_neoseo_novaposhta->getZone($this->request->post['zone_id']);
+							if(isset($np_zone['ref'])){
+								$this->request->post['custom_field']['np_region'] = $np_zone['ref'];
+							}
+						}
+						if(isset($this->request->post['shipping_custom_field']['np_city'])){
+							$this->request->post['custom_field']['np_city'] = $this->request->post['shipping_custom_field']['np_city'];
+						}
+						if(isset($this->request->post['shipping_custom_field']['np_warehouse'])){
+							$this->request->post['custom_field']['np_warehouse'] = $this->request->post['shipping_custom_field']['np_warehouse'];
+						}
+					}
+					/* NEOSEO NovaPoshta END */]]></add>
+        </operation>
+
+    </file>
+
+    <file path="catalog/controller/checkout/checkout.php">
+        <operation>
+            <search><![CDATA[public function index() {]]></search>
+            <add position="after"><![CDATA[
+		/* NeoSeo NovaPoshta BEGIN */
+		if($this->config->get('neoseo_novaposhta_status') == 1){
+			$this->document->addScript('catalog/view/javascript/neoseo_novaposhta.js');
+		}
+		/* NeoSeo NovaPoshta END */]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/simplecheckout.php">
+        <operation>
+            <search><![CDATA[public function index($args = null) {]]></search>
+            <add position="after"><![CDATA[
+		/* NeoSeo NovaPoshta BEGIN */
+		if($this->config->get('neoseo_novaposhta_status') == 1){
+			$this->document->addScript('catalog/view/javascript/neoseo_novaposhta.js');
+		}
+		/* NeoSeo NovaPoshta END */]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/oct_fastorder.php">
+        <operation>
+            <search><![CDATA[public function index() {]]></search>
+            <add position="after"><![CDATA[
+		/* NeoSeo NovaPoshta BEGIN */
+		if($this->config->get('neoseo_novaposhta_status') == 1){
+			$this->document->addScript('catalog/view/javascript/neoseo_novaposhta.js');
+		}
+		/* NeoSeo NovaPoshta END */]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/simplecheckout.php">
+        <search><![CDATA[$error = false;]]></search>
+        <add position="after"><![CDATA[
+		/* NEOSEO Novaposhta BEGIN */
+		if ($this->config->get('neoseo_novaposhta_status') == 1) {
+			$shipping_method = isset($this->session->data['shipping_method']['code']) ? $this->session->data['shipping_method']['code'] : '';
+			$shipping_method = explode('.', $shipping_method);
+			if (!empty($shipping_method[1]) && $shipping_method[0] == 'neoseo_novaposhta') {
+
+				if($shipping_method[1] == 'courier_delivery'){
+
+				}
+
+				if($shipping_method[1] == 'warehouse_delivery'){
+					if(!isset($this->session->data['neoseo_novaposhta']['warehouse'])) {
+						$error = true;
+					}
+				}
+			}
+		}
+	/* NEOSEO Novaposhta END */
+            ]]></add>
+    </file>
+
+    <file path="catalog/model/localisation/zone.php">
+        <operation>
+            <search><![CDATA[public function getZone($zone_id) {]]></search>
+            <add position="after"><![CDATA[		/* NEOSEO NovaPoshta BEGIN */
+		if($this->config->get('neoseo_novaposhta_status') == 1){
+			$this->load->model('extension/shipping/neoseo_novaposhta');
+			return $this->model_extension_shipping_neoseo_novaposhta->getZone($zone_id);
+		}
+		/* NEOSEO NovaPoshta END */]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[public function getZonesByCountryId($country_id) {]]></search>
+            <add position="after"><![CDATA[		/* NEOSEO NovaPoshta BEGIN */
+		if($this->config->get('neoseo_novaposhta_status') == 1){
+			$this->load->model('localisation/country');
+			$country = $this->model_localisation_country->getCountry($country_id);
+			if(isset($country['iso_code_3']) && $country['iso_code_3'] == 'UKR'){
+				$this->load->model('extension/shipping/neoseo_novaposhta');
+				return $this->model_extension_shipping_neoseo_novaposhta->getZones($country_id);
+			}
+		}
+		/* NEOSEO NovaPoshta END */]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/model/checkout/order.php" >
+        <operation>
+            <search><![CDATA[public function addOrderHistory($order_id, $order_status_id, $comment = '', $notify = false, $override = false) {]]></search>
+            <add position="after"><![CDATA[		/* NeoSeo Novaposhta BEGIN */
+		if($this->config->get('neoseo_novaposhta_status') == 1){
+			$this->load->controller('extension/shipping/neoseo_novaposhta/createecp',array('order_id' => $order_id , 'order_status_id' => $order_status_id));
+		}
+		/* NeoSeo Novaposhta END */]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/model/checkout/order.php">
+        <operation>
+            <search><![CDATA[public function addOrder($data) {]]></search>
+            <add position="after"><![CDATA[
+		/* NEOSEO Novaposhta BEGIN */
+		if ($this->config->get('neoseo_novaposhta_status') == 1) {
+			$shipping_method = isset($this->session->data['shipping_method']['code']) ? $this->session->data['shipping_method']['code'] : '';
+			$shipping_method = explode('.', $shipping_method);
+			if (!empty($shipping_method[1]) && $shipping_method[0] == 'neoseo_novaposhta') {
+				$this->load->model('extension/shipping/neoseo_novaposhta');
+				$zone = $this->model_extension_shipping_neoseo_novaposhta->getZone($data['shipping_zone_id']);
+				$data['shipping_custom_field']['np_region'] = $zone['ref'];
+				$data['shipping_custom_field']['np_city'] = $this->session->data['neoseo_novaposhta']['city'];
+
+				if($shipping_method[1] == 'courier_delivery'){
+					$data['shipping_custom_field']['np_address'] = isset($this->session->data['neoseo_novaposhta']['courier_address'])?$this->session->data['neoseo_novaposhta']['courier_address']:$data['shipping_address_1'];
+					$data['shipping_address_1'] = isset($this->session->data['neoseo_novaposhta']['courier_address'])?$this->session->data['neoseo_novaposhta']['courier_address']:$data['shipping_address_1'];
+				}
+
+				if($shipping_method[1] == 'warehouse_delivery'){
+					$data['shipping_custom_field']['np_warehouse'] = $this->session->data['neoseo_novaposhta']['warehouse'];
+					$warehouse = $this->model_extension_shipping_neoseo_novaposhta->getWarehouse($this->session->data['neoseo_novaposhta']['warehouse']);
+					$data['shipping_address_1'] = $warehouse['name'];
+				}
+			}
+		}
+		/* NEOSEO Novaposhta END */]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/simplecheckout_shipping.php">
+        <operation>
+            <search><![CDATA[foreach ($results as $result)]]></search>
+            <add position="before"><![CDATA[
+				/* NEOSEO Novaposhta BEGIN */
+				if (isset($this->request->post['shipping_method'])) {
+				    $this->session->data['shipping_method']['code'] = $this->request->post['shipping_method'];
+				}
+				/* NEOSEO Novaposhta END */]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/view/theme/default/template/checkout/checkout.twig">
+        <operation>
+            <search><![CDATA[$(document).delegate('#button-shipping-method', 'click', function() {]]></search>
+            <add position="after"><![CDATA[
+            /* NEOSEO Novaposhta BEGIN */
+            if(typeof np_validator === 'function' && !np_validator()){
+                return;
+            }
+            /* NEOSEO Novaposhta END */]]></add>
+        </operation>
+    </file>
+
+</modification>

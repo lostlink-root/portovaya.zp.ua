@@ -1,0 +1,198 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                {% if not license_error %}
+                    <button type="submit" name="action" value="save" form="form" data-toggle="tooltip"
+                            title="{{ button_save }}" class="btn btn-primary"><i
+                                class="fa fa-save"></i> {{ button_save }}</button>
+                    <button type="submit" name="action" value="save_and_close" form="form" data-toggle="tooltip"
+                            title="{{ button_save_and_close }}" class="btn btn-default"><i
+                                class="fa fa-save"></i> {{ button_save_and_close }}</button>
+                {% else %}
+                    <a href="{{ recheck }}" data-toggle="tooltip" title="{{ button_recheck }}" class="btn btn-default"/>
+                    <i class="fa fa-check"></i> {{ button_recheck }}</a>
+                {% endif %}
+                <a href="{{ close }}" data-toggle="tooltip" title="{{ button_close }}" class="btn btn-default"><i
+                            class="fa fa-close"></i> {{ button_close }}</a>
+            </div>
+            <img width="36" height="36" style="float:left" src="view/image/neoseo.png" alt=""/>
+            <h1>{{ heading_title_raw ~ " " ~ text_module_version }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        {% if error_warning %}
+            <div class="alert alert-danger">
+                <i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        {% if success  and  success %}
+            <div class="alert alert-success">
+                <i class="fa fa-check-circle"></i>
+                {{ success }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-body">
+
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
+                    {% if license_error == null  %}
+                    <li><a href="#tab-usefull" data-toggle="tab">{{ tab_usefull }}</a></li>
+                    {% endif %}
+                </ul>
+
+                <form action="{{ save }}" method="post" enctype="multipart/form-data" id="form">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab-general">
+                            {% if not license_error %}
+
+                                {{ widgets.dropdown('status', {0: text_disabled, 1: text_enabled}) }}
+                                {{ widgets.input('name') }}
+                                {{ widgets.localeInput('title',full_languages) }}
+                                {{ widgets.input('limit') }}
+                                {{ widgets.dropdown('type',types) }}
+
+                                <div class="form-group" id="filter_page">
+                                    <label class="col-sm-5 control-label"
+                                           for="input-filter-pages">{{ entry_filter_pages }}</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" name="filter_page" value=""
+                                               placeholder="{{ entry_filter_pages }}" id="input-filter-pages"
+                                               class="form-control"/>
+                                        <div id="filter-pages" class="well well-sm"
+                                             style="height: 150px; overflow: auto;">
+                                            {% if filter_pages %}
+                                                {% for filter_page in filter_pages %}
+                                                    <div id="filter-page-{{ filter_page.page_id }}"><i
+                                                                class="fa fa-minus-circle"></i> {{ filter_page.tag_name }}
+                                                        <input type="hidden" name="neoseo_filter_tag_filter_pages[]"
+                                                               value="{{ filter_page.page_id }}"/>
+                                                    </div>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% else %}
+
+                                <div>{{ license_error }}</div>
+
+                            {% endif %}
+
+                        </div>
+
+                        {% if license_error == null  %}
+                        <div class="tab-pane" id="tab-usefull">
+                            {{ widgets.usefullLinks() }}
+                        </div>
+                        {% endif %}
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript"><!--
+    if (window.location.hash.indexOf('#tab') == 0 && $("[href=" + window.location.hash + "]").length) {
+        $(".panel-body > .nav-tabs li").removeClass("active");
+        $("[href=" + window.location.hash + "]").parents('li').addClass("active");
+        $(".panel-body:first .tab-content:first .tab-pane:first").removeClass("active");
+        $(window.location.hash).addClass("active");
+    }
+    $(".nav-tabs li a").click(function () {
+        var url = $(this).prop('href');
+        window.location.hash = url.substring(url.indexOf('#'));
+    });
+    // Специальный фикс системной функции, поскольку даниель понятия не имеет о том что в url может быть еще и hash
+    // и по итогу этот hash становится частью user_token
+    function getURLVar(key) {
+        var value = [];
+
+        var url = String(document.location);
+        var url = url.substring(0, url.indexOf('#'));
+        var query = url.split('?');
+
+        if (query[1]) {
+            var part = query[1].split('&');
+
+            for (i = 0; i < part.length; i++) {
+                var data = part[i].split('=');
+
+                if (data[0] && data[1]) {
+                    value[data[0]] = data[1];
+                }
+            }
+
+            if (value[key]) {
+                return value[key];
+            } else {
+                return '';
+            }
+        }
+    }
+
+    //--></script>
+<script type="text/javascript">
+    function checkType(val) {
+        if (val == 'hand') {
+            $('#filter_page').show();
+        } else {
+            $('#filter_page').hide();
+        }
+    }
+
+    $(function () {
+        var val = $('#neoseo_filter_tag_type').val();
+        checkType(val);
+
+        $('#neoseo_filter_tag_type').on('change', function () {
+            checkType($(this).val());
+        });
+    });
+
+    $('input[name=\'filter_page\']').autocomplete({
+        'source': function (request, response) {
+            $.ajax({
+                url: 'index.php?route=extension/module/neoseo_filter_tag/autocomplete&user_token={{ user_token }}&tag_name=' + encodeURIComponent(request),
+                dataType: 'json',
+                success: function (json) {
+                    response($.map(json, function (item) {
+                        return {
+                            label: item['tag_name'],
+                            value: item['page_id']
+                        }
+                    }));
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                }
+
+            });
+        },
+        'select': function (item) {
+
+            $('input[name=\'filter_page\']').val('');
+
+            $('#filter-page-' + item['value']).remove();
+
+            $('#filter-pages').append('<div id="filter-page-' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="neoseo_filter_tag_filter_pages[]" value="' + item['value'] + '" /></div>');
+        }
+    });
+
+    $('#filter-pages').delegate('.fa-minus-circle', 'click', function () {
+        $(this).parent().remove();
+    });
+
+</script>
+{{ footer }}

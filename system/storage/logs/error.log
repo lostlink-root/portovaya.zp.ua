@@ -1,0 +1,25 @@
+2020-04-12 21:10:07 - PHP Warning:  mysqli::mysqli(): (HY000/1044): Access denied for user 'db_user'@'localhost' to database ' test3_paultitov_com' in /home/h63072/data/www/test3.paultitov.com/system/library/db/mysqli.php on line 7
+2020-04-12 21:10:07 - PHP Warning:  DB\MySQLi::__construct(): Couldn't fetch mysqli in /home/h63072/data/www/test3.paultitov.com/system/library/db/mysqli.php on line 10
+2020-04-12 21:10:07 - PHP Warning:  DB\MySQLi::__construct(): Couldn't fetch mysqli in /home/h63072/data/www/test3.paultitov.com/system/library/db/mysqli.php on line 10
+2020-04-12 21:10:07 - PHP Notice:  Undefined variable: mysql in /home/h63072/data/www/test3.paultitov.com/install/controller/install/step_3.php on line 280
+2020-04-12 21:10:07 - PHP Notice:  Trying to get property of non-object in /home/h63072/data/www/test3.paultitov.com/install/controller/install/step_3.php on line 280
+2020-04-12 21:10:24 - PHP Warning:  mysqli::mysqli(): (HY000/1044): Access denied for user 'db_user'@'localhost' to database ' test3_paultitov_com' in /home/h63072/data/www/test3.paultitov.com/system/library/db/mysqli.php on line 7
+2020-04-12 21:10:24 - PHP Warning:  DB\MySQLi::__construct(): Couldn't fetch mysqli in /home/h63072/data/www/test3.paultitov.com/system/library/db/mysqli.php on line 10
+2020-04-12 21:10:24 - PHP Warning:  DB\MySQLi::__construct(): Couldn't fetch mysqli in /home/h63072/data/www/test3.paultitov.com/system/library/db/mysqli.php on line 10
+2020-04-12 21:10:24 - PHP Notice:  Undefined variable: mysql in /home/h63072/data/www/test3.paultitov.com/install/controller/install/step_3.php on line 280
+2020-04-12 21:10:24 - PHP Notice:  Trying to get property of non-object in /home/h63072/data/www/test3.paultitov.com/install/controller/install/step_3.php on line 280
+2020-04-12 21:11:04 - PHP Warning:  mysqli::mysqli(): (HY000/1044): Access denied for user 'db_user'@'localhost' to database ' test3_paultitov_com' in /home/h63072/data/www/test3.paultitov.com/system/library/db/mysqli.php on line 7
+2020-04-12 21:11:04 - PHP Warning:  DB\MySQLi::__construct(): Couldn't fetch mysqli in /home/h63072/data/www/test3.paultitov.com/system/library/db/mysqli.php on line 10
+2020-04-12 21:11:04 - PHP Warning:  DB\MySQLi::__construct(): Couldn't fetch mysqli in /home/h63072/data/www/test3.paultitov.com/system/library/db/mysqli.php on line 10
+2020-04-12 21:11:04 - PHP Notice:  Undefined variable: mysql in /home/h63072/data/www/test3.paultitov.com/install/controller/install/step_3.php on line 280
+2020-04-12 21:11:04 - PHP Notice:  Trying to get property of non-object in /home/h63072/data/www/test3.paultitov.com/install/controller/install/step_3.php on line 280
+2020-04-12 21:11:07 - PHP Warning:  mysqli::mysqli(): (HY000/1044): Access denied for user 'db_user'@'localhost' to database ' test3_paultitov_com' in /home/h63072/data/www/test3.paultitov.com/system/library/db/mysqli.php on line 7
+2020-04-12 21:11:07 - PHP Warning:  DB\MySQLi::__construct(): Couldn't fetch mysqli in /home/h63072/data/www/test3.paultitov.com/system/library/db/mysqli.php on line 10
+2020-04-12 21:11:07 - PHP Warning:  DB\MySQLi::__construct(): Couldn't fetch mysqli in /home/h63072/data/www/test3.paultitov.com/system/library/db/mysqli.php on line 10
+2020-04-12 21:11:07 - PHP Notice:  Undefined variable: mysql in /home/h63072/data/www/test3.paultitov.com/install/controller/install/step_3.php on line 280
+2020-04-12 21:11:07 - PHP Notice:  Trying to get property of non-object in /home/h63072/data/www/test3.paultitov.com/install/controller/install/step_3.php on line 280
+2020-04-12 21:11:48 - PHP Warning:  mysqli::mysqli(): (HY000/1044): Access denied for user 'narek'@'localhost' to database ' test3_paultitov_com' in /home/h63072/data/www/test3.paultitov.com/system/library/db/mysqli.php on line 7
+2020-04-12 21:11:48 - PHP Warning:  DB\MySQLi::__construct(): Couldn't fetch mysqli in /home/h63072/data/www/test3.paultitov.com/system/library/db/mysqli.php on line 10
+2020-04-12 21:11:48 - PHP Warning:  DB\MySQLi::__construct(): Couldn't fetch mysqli in /home/h63072/data/www/test3.paultitov.com/system/library/db/mysqli.php on line 10
+2020-04-12 21:11:48 - PHP Notice:  Undefined variable: mysql in /home/h63072/data/www/test3.paultitov.com/install/controller/install/step_3.php on line 280
+2020-04-12 21:11:48 - PHP Notice:  Trying to get property of non-object in /home/h63072/data/www/test3.paultitov.com/install/controller/install/step_3.php on line 280

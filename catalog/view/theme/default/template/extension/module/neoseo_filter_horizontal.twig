@@ -1,0 +1,258 @@
+<div class="side-module filter box-shadow box-corner filter-horizontal">
+
+
+    <div class="filter-button hidden-md hidden-lg" data-toggle="collapse" data-target="#filter-list">
+        <span>{{ heading_title }}</span>
+        <i class="fa fa-bars"></i>
+    </div>
+
+    <div id="filter-list" class="">
+        <h3 class="text-center hidden-sm hidden-xs"><b>{{ heading_title }}</b></h3>
+        <div class="neoseo-filter horizontal">
+
+            <div class="options-box">
+                {% if use_price == 1 and min_price != max_price %}
+                    <div id="option-price" class="option horizontal">
+                        <div class="option-horizontal-box">
+                            <div class="option-name" data-target="#option-values-price">
+                                {{ text_price }}
+                                <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </div>
+                            <div class="option-values horizontal-slide-price" id="option-values-price">
+                                <div></div>
+                            </div>
+                        </div>
+
+                    </div>
+                {% endif %}
+
+                {% for option in options %}
+
+                <div id="option-{{ option.option_id }}" class="option horizontal">
+
+
+                    <div class="option-horizontal-box">
+                        <div class="option-name" data-target="#option-values-{{ option.option_id }}">
+                            {{ option.name }}
+                            {% if option.quantity > 0 %}<i class="fa fa-caret-down" aria-hidden="true"></i>
+                        </div>
+
+                        <div id="option-values-{{ option.option_id }}" class="option-values">
+
+                            {% for key, value in option.values if not (not value.selected and value.count <= 0) %}
+
+                                <div class="option-{{ option.type }} {{ option.type }} {% if value.selected %} option-selected{% endif %} option-description">
+
+                                    {% if option.type == "checkbox" %}
+
+                                    <input id="option-value-{{ value.option_value_id }}" class="{{ option.type }}"
+                                           type="checkbox" {% if value.selected %}checked="checked"{% endif %}/>
+
+                                    {% if  option.style == 'image' %}
+                                    <label for="option-value-{{ value.option_value_id }}" class="option-position">
+                                        {% else %}
+                                        <label for="option-value-{{ value.option_value_id }}">
+                                            {% endif %}
+
+                                            <a href="{{ value.url }}">
+
+                                                {% if option.style == 'color' %}
+                                                <div class="value-container">{% endif %}
+
+                                                    {% if option.style == 'color' %}
+                                                        <span class="option-color"
+                                                              style="background-color: {{ value.color }};"></span>
+                                                    {% endif %}
+
+                                                    {% if  option.style == 'image' %}
+                                                    <div class="option-{{ value.position }}">
+                                                        {% if value.image %}<img
+                                                            src="/image/{{ value.image }}"/>{% endif %}
+                                                        {% endif %}
+
+                                                        <span>{{ value.name }}</span>{% if  option.style == 'image' %}
+                                                    </div>
+                                                    {% endif %}
+                                                    {% if option.style == 'color' %}</div>{% endif %}
+
+                                                {% if  not value.selected %}
+                                                    <span class="option-counter">{{ value.count }}</span>
+                                                {% endif %}
+
+                                            </a>
+
+                                        </label>
+
+                                        {% elseif option.type == "radio" %}
+
+                                            <input id="option-value-{{ value.option_value_id }}"
+                                                   class="{{ option.type }}" name="option-{{ option.option_id }}"
+                                                   type="radio" {% if value.selected %}checked="checked"{% endif %}/>
+                                            <label for="option-value-{{ value.option_value_id }}">
+
+                                                <a href="{{ value.url }}">
+
+                                                    {% if option.style == 'color' %}
+                                                        <span class="option-color"
+                                                              style="background-color: {{ value.color }};"></span>
+                                                    {% endif %}
+
+                                                    {% if  option.style == 'image' %}
+                                                        <img src="/image/{{ value.image }}"/>
+                                                    {% endif %}
+
+                                                    {{ value.name }}
+
+                                                    {% if  not value.selected %}
+                                                        <span class="option-counter">{{ value.count }}</span>
+                                                    {% endif %}
+
+                                                </a>
+
+                                            </label>
+
+                                        {% elseif option.type == "grid" %}
+
+                                            {% if option.style == 'color' %}
+                                                <a class="color" href="{{ value.url }}" data-toggle="tooltip"
+                                                   data-placement="top" title="{{ value.name }}">
+                                                    <span class="option-color"
+                                                          style="background-color: {{ value.color }};"></span>
+                                                </a>
+                                            {% else %}
+                                                <a href="{{ value.url }}">
+                                                    <span class="option-square">{{ value.name }}</span>
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                        {# end option type switch  #}
+
+                                </div>
+                            {% endfor %}
+                            {# end values loop  #}
+
+                        </div>
+                        {% else %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if option.selected %}
+                    {% for option_value in option.values if option_value.selected %}
+                        <div id="option-checked" class="option-checked">
+						<span>
+							<a rel="nofollow" href="{{ option_value.url }}">x</a>
+						</span>
+                            {{ option_value.name }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+            {% endfor %}
+            {# end options loop  #}
+        </div>
+
+        {% if  selected_options_values_count > 0 %}
+            <div class="selected-options">
+                <a rel="nofollow" href="{{ cancel_all }}" class="reset-filter-button">{{ text_cancel_all }}</a>
+            </div>
+        {% endif %}
+
+        <div class="button-choice-group">
+            <a rel="nofollow" href="#" class="pick-up-button">{{ pickup_text }}</a>
+            <a rel="nofollow" href="{{ cancel_all }}" class="reset-button">{{ text_reset }}</a>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<script>
+    $('.filter-button').click(function () {
+        $(this).toggleClass('open')
+    });
+
+    $('.option-checkbox input, .option-radio input').click(function (e) {
+        e.preventDefault();
+        var id = $(this).attr('id');
+        var href = $('label[for=' + id + '] a').attr('href');
+        document.location = href;
+
+    });
+
+    $('.option .option-name').click(function (e) {
+        if ($(window).width() < 992) {
+            $(this).parents('.option').toggleClass('option-active');
+        }
+
+    });
+
+    {% if use_price == 1 %}
+    $(document).ready(function () {
+    $('#option-values-price div').slider({
+        range: true,
+        min: Number('{{ min_price }}'),
+        max: Number('{{ max_price }}'),
+        valueBegin: Number('{{ price_begin }}'),
+        valueEnd: Number('{{ price_end }}'),
+        values: [Number('{{ price_begin }}'), Number('{{ price_end }}')],
+        slide: function (event, ui) {
+            $("#price-from").text(ui.values[0]);
+            $("#price-to").text(ui.values[1]);
+        },
+        change: function (event, ui) {
+            var min = $(this).slider('option', 'min');
+            var max = $(this).slider('option', 'max');
+            var valueBegin = $(this).slider('option', 'valueBegin');
+            var valueEnd = $(this).slider('option', 'valueEnd');
+            if (ui.values[0] == valueBegin && ui.values[1] == valueEnd) {
+                // nothing changed
+            } else if (ui.values[0] == min && ui.values[1] == max) {
+                // default url without price
+                var url = "{{ url_priceless }}";
+                document.location = url;
+            } else {
+                var url = "{{ url_for_price }}";
+                url = url.replace('PRICE_FROM', ui.values[0]);
+                url = url.replace('PRICE_TO', ui.values[1]);
+                document.location = url;
+            }
+
+        }
+    });
+        $('<span id="price-from">{{ price_begin }}</span>').appendTo('.ui-slider-handle:eq(0)');
+        $('<span id="price-to">{{ price_end }}</span>').appendTo('.ui-slider-handle:eq(1)');
+    });
+    {% endif %}
+
+    $(window).resize(function () {
+        var viewportWidth = $(window).width();
+        if (viewportWidth <= 991) {
+            $('#filter-list').addClass('collapse');
+        } else if (viewportWidth >= 992) {
+            $('#filter-list').removeClass('collapse');
+        }
+    });
+
+    $(document).ready(function () {
+        var viewportWidth = $(window).width();
+        if (viewportWidth <= 991) {
+            $('#filter-list').addClass('collapse');
+        } else if (viewportWidth >= 992) {
+            $('#filter-list').removeClass('collapse');
+        }
+
+        if (viewportWidth <= 991) {
+            var $a = $('.option-color').parent();
+            var $b = $a.parent();
+            $b.css('padding', '0');
+            var $c = $b.parent();
+            $c.css({
+                'padding': '10px',
+                'text-align': 'center'
+            });
+        }
+    });
+
+</script>

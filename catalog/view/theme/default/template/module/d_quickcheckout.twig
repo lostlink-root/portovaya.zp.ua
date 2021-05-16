@@ -1,0 +1,228 @@
+<script>
+var config = {{ json_config }} ;
+if(typeof(ga) == "undefined")
+   config.general.analytics_event = 0;
+</script>
+<style>
+{{ config['design']['custom_style'] }}
+{% if config.design.only_quickcheckout %} 
+body > *{
+	display: none
+}
+body > #d_quickcheckout{
+	display: block;
+} 
+#d_quickcheckout.container #d_logo{
+	margin: 20px 0px;
+}
+{% endif %} 
+</style>
+<script type="text/javascript">
+	$('body').on('change', "input[name='shipping_method']", function() {
+		changeAddressVisibility(this.checked, this.id);
+	});
+	$('body').on("keyup", "#payment_address_email", function() {
+		let value = $(this).val();
+		console.log($(this).val());
+		if (value.length === 0) {
+			value = " ";
+		}
+		$(this).attr("value", value);
+	});
+
+	$(window).load(function() {
+		checkAddressVisibility();
+		clearEmailValidation();
+		checkDeliveryOptions();
+	});
+
+	/**
+	 * Hide delivery option if cart total below 500 UAH
+	 */
+	function checkDeliveryOptions() {
+		let total = parseFloat($("#cart_total").text());
+		let label = $("label[for='distance_based.distance_based_0']");
+
+		if (total < 500) {
+			label.parent().hide();
+			label.parent().prev().hide();
+			let defaultShipping = $($("input[name='shipping_method']")[0]);
+			if (defaultShipping.prop("checked") === false) {
+				defaultShipping.prop("checked", true).change();
+			}
+			$("#payment_address_address_1_input").addClass("hidden");
+		} else {
+			label.parent().show();
+			label.parent().prev().show();
+		}
+	}
+
+	/**
+	 * Disable email "required" validation
+	 */
+	function clearEmailValidation() {
+		$("#payment_address_email").removeAttr('data-rule-maxlength');
+		$("#payment_address_email").removeAttr('data-msg-maxlength');
+		// $("#payment_address_email").removeAttr('data-rule-remote');
+		// $("#payment_address_email").removeAttr('data-msg-remote');
+		$("#payment_address_email").attr("value", $("#payment_address_email").val());
+
+		$("#payment_address_email").removeClass('required');
+		$("#payment_address_email").addClass('not-required');
+		$("#payment_address_email_input").removeClass('required');
+		$("#payment_address_email_input").addClass('not-required');
+	}
+
+	/**
+	 * Change address input visibility according to selected delivery option
+	 */
+	function checkAddressVisibility() {
+		let selectedItem = $("input[name='shipping_method']:checked");
+		changeAddressVisibility(selectedItem.prop("checked"), selectedItem.attr("id"));
+	}
+
+	function changeAddressVisibility(checked, id) {
+		let distanceBasedBlock = $("#payment_address_address_1_input");
+		let cityBlock = $("#payment_address_city_input");
+		if (checked && id === "distance_based.distance_based_0") {
+			distanceBasedBlock.removeClass("hidden");
+			cityBlock.addClass("hidden");
+		} else if (checked && id === "neoseo_novaposhta.warehouse_delivery") {
+			distanceBasedBlock.addClass("hidden");
+			cityBlock.removeClass("hidden");
+		} else {
+			distanceBasedBlock.addClass("hidden");
+			cityBlock.addClass("hidden");
+		}
+	}
+</script>
+{# Google maps suggestion code #}
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVzgDQyc4osnz7bnECzQIqlTmT35FwWTQ&libraries=places" defer></script>
+<script type="text/javascript">
+	let shippingAutocomplete;
+
+	function initAutocomplete() {
+		if ($('#payment_address_address_1').length > 0) {
+			shippingAutocomplete = new google.maps.places.Autocomplete(
+					/** @type {!HTMLInputElement} */(document.getElementById('payment_address_address_1')),
+					{
+						types: ['geocode'],
+						componentRestrictions: {country: "ua"}
+					});
+
+			shippingAutocomplete.addListener('place_changed', fillInShippingAddress);
+		}
+	}
+	function fillInShippingAddress() {
+		var formPrefix = "payment_address_";
+		var place = shippingAutocomplete.getPlace();
+		updateAddress(formPrefix, place);
+
+	}
+	function updateAddress(formPrefix, place) {
+		// Get the place details from the autocomplete object.
+		var address = {
+			name: "",
+			street_line_1: "",
+			suburb: "",
+			state: "",
+			postcode: ""
+		};
+		address.name = place.name;
+		$.each(place.address_components, function (idx, addr) {
+			var addressType = addr.types[0];
+			address[addressType] = {
+				long_name: addr.long_name,
+				short_name: addr.short_name
+			};
+
+
+			if (addressType == 'route') {
+				var regex = RegExp('^(.*)'+place.name.split(' ',1)[0]), // get all the user entered values before a match with the first word from the Google result
+						result = regex.exec($('#' + formPrefix + 'address_1').val());
+
+				if ( Array.isArray(result) ) {
+					address.name = result[1]+''+place.name; // add the street name to the user-entered unit & street number
+				}
+			}
+		});
+
+		let fullAddress = "";
+		fullAddress = address.name;
+
+		if (address.hasOwnProperty('locality') && address.locality.hasOwnProperty('long_name')) {
+			fullAddress += ", " + address.locality.long_name;
+			$('#' + formPrefix + 'city').val(address.locality.long_name).parent().addClass('-active').trigger('change');
+		} else {
+			$('#' + formPrefix + 'city').val('').parent().addClass('-active').trigger('change');
+		}
+
+		if (address.hasOwnProperty('administrative_area_level_1') && address.administrative_area_level_1.hasOwnProperty('short_name')) {
+			fullAddress += ", " + address.administrative_area_level_1.short_name;
+			$('#' + formPrefix + 'zone_id').val(address.administrative_area_level_1.short_name).trigger('change');
+		} else {
+			$('#' + formPrefix + 'zone_id').val('').trigger('change');
+		}
+
+		if (address.hasOwnProperty('postal_code') && address.postal_code.hasOwnProperty('long_name')) {
+			fullAddress += ", " + address.postal_code.long_name;
+			$('#' + formPrefix + 'postcode').val(address.postal_code.long_name).parent().addClass('-active').trigger('change');
+		} else {
+			$('#' + formPrefix + 'postcode').val('').parent().addClass('-active').trigger('change');
+		}
+		$('#' + formPrefix + 'address_1').val(fullAddress).parent().addClass('-active');
+		$('#' + formPrefix + 'address_2').val('').parent().removeClass('-active');
+
+	}
+</script>
+{# END Google maps suggestion code #}
+<div id="d_quickcheckout">
+	{% if config.design.only_quickcheckout %} 
+	<div id="d_logo" class="center-block text-center"></div>
+	{% endif %} 
+	{{ field }} 
+	<div class="row">
+		<div class="col-md-12"></div>
+	</div>
+	<div class="qc-col-0">
+		{{ login }} 
+		{{ payment_address }} 
+		{{ shipping_address }} 
+		{{ shipping_method }} 
+		{{ payment_method }} 
+		{{ cart }} 
+		{{ payment }} 
+		{{ confirm }} 
+	</div>
+	<div class="row">
+		<div class="qc-col-1 col-md-6">
+		</div>
+		<div class="col-md-6">
+			<div class="row">
+				<div class="qc-col-2 col-md-{{  config.design.column_width[4] ? (config.design.column_width[2] / config.design.column_width[4] * 12)|round : '0' }}  ">
+    			</div>
+    			<div class="qc-col-3 col-md-{{ config.design.column_width[4] ? 12 - (config.design.column_width[2] / config.design.column_width[4] * 12)|round : '0' }} ">
+    			</div>
+				<div class="qc-col-4 col-md-12">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+$(function() {
+	
+	$('.qc-step').each(function(){
+		$(this).appendTo('.qc-col-' + $(this).attr('data-col'));	
+	})
+	$('.qc-step').tsort({attr:'data-row'});
+{% if config.design.only_quickcheckout %} 
+	$('body').prepend($('#d_quickcheckout'));
+	$('#d_quickcheckout').addClass('container')
+	$('#d_quickcheckout #d_logo ').prepend($('header #logo').html())
+{% endif %} 
+{% if not config.design.breadcrumb %} 
+	$('.qc-breadcrumb').hide();
+{% endif %} 
+})
+</script>

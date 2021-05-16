@@ -1,0 +1,185 @@
+<!-- 
+  
+
+  Module Name: Magic Filter
+  Description:MagicFilter plugin is one of the best product filter plugin for opencart. It has feature to filter products by
+  manufactures and price range.
+  Author: Rootingenious infotch
+  Author Email:support@rootingenious.com
+  Author URI: www.rootingenious.com
+Version 3.0.0.0
+  Tags: filter, magic filter, price filter, manufacture filter, brand filter,product filter
+
+-->
+<link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
+{{ header }} {{ column_left }}
+
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" form="form-magicfilter" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+            <h1>{{ heading_title }}</h1>
+            <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+        </div>
+    </div>
+
+    {% if error_warning %}
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+     {% endif %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab_setting" data-toggle="tab"><i class="fa fa-pencil"></i>{{ text_magicsetting }}</a></li>
+                <li><a href="#tab_manufacturer" data-toggle="tab"> {{ text_Manufacturer }}</a></li>
+                <li><a href="#tab-price" data-toggle="tab">{{ text_Price }}</a></li>
+            </ul>
+        </div>
+        <div class="tab-content">
+           {# <?php    
+            // start magicfilter stetting         
+            ?>#}
+            <div class="tab-pane active" id="tab_setting">
+                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-manufacturer1" class="form-horizontal">
+                    <input type='hidden' name='module_magicfilter_status' value="1" />
+
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="magicfilter_status">{{ entry_status_Manufacturer }}</label>
+                        <div class="col-sm-10">
+                            <select name="module_magicfilter_manufacturer_filter_status" id="magicfilter_status" class="form-control form-magic-setting">
+                                {% if  module_magicfilter_manufacturer_filter_status %}
+                                <option value="1" selected="selected">{{ text_enabled }}</option>
+                                <option value="0">{{ text_disabled }}</option>
+                             {% else %}
+                                <option value="1">{{ text_enabled }}</option>
+                                <option value="0" selected="selected">{{ text_disabled }}</option>
+                                 {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-price-status">{{ entry_status_price }}</label>
+                        <div class="col-sm-10">
+                            <select name="module_magicfilter_price_filter_status" id="input-price-status" class="form-control form-magic-setting">
+                                {% if module_magicfilter_price_filter_status %}
+                                <option value="1" selected="selected">{{ text_enabled }}</option>
+                                <option value="0">{{ text_disabled }}</option>
+                              {% else %}
+                                <option value="1">{{ text_enabled }}</option>
+                                <option value="0" selected="selected">{{ text_disabled }}</option>
+                                 {% endif %}
+                            </select>
+                        </div>
+                    </div><br><br>
+
+
+                    </div>
+                   {# <?php    
+                    // over magicfilter stetting 
+                    // start manufacture filter
+                    ?>#}
+                    <div class="tab-pane" id="tab_manufacturer">
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-heading">{{ entry_heading }}</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="module_magicfilter_heading" value="{{ module_magicfilter_heading }}"  placeholder="{{ entry_heading }}"  id="magicfilter_heading" class="form-control" required/>
+                                       
+                                       
+                                      
+                                  
+                            </div>
+                        </div> <br><br>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="magicfilter_image_status">{{ entry_image_form_manufactur }}</label>
+                            <div class="col-sm-10">
+                                <select name="module_magicfilter_image_status" id="module_magicfilter_image_status" class="form-control">
+                                    {% if module_magicfilter_image_status %}
+                                    <option value="1" selected="selected">{{ text_enabled }}</option>
+                                    <option value="0">{{ text_disabled }}</option>
+                                  {% else %}
+                                    <option value="1">{{ text_enabled }}</option>
+                                    <option value="0" selected="selected">{{ text_disabled }}</option>
+                                     {% endif %}
+                                </select>
+                            </div>
+                        </div><br><br>
+
+                        <div id="div_width_height">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-image">{{ entry_image_height_width }}</label>
+                                <div class="col-sm-10">
+                                    <div class=" row">
+                                        <div class="col-md-6">
+                                            <input type="text" name="module_magicfilter_image_width" value="{{ module_magicfilter_image_width }}"  placeholder="{{ entry_image_width }} "  id="magicfilter_image_width" class="form-control" required/>
+                                                   
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" name="module_magicfilter_image_height" value="{{ module_magicfilter_image_height }}" placeholder="{{ entry_image_height }}"  id="magicfilter_image_height" class="form-control" required/>
+                                                 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><br><br>
+                    </div>
+                   {# <?php
+                    // over manufacture filter
+                    // start praice filter
+                    ?>#}
+
+                    <div class="tab-pane" id="tab-price">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-price-range">{{ entry_price_range }}</label>
+                            <div class="col-sm-10">
+                                <input name="module_magicfilter_price_filter_range" 	id="input-price-range" value ="{{ module_magicfilter_price_filter_range }}" class="form-control" placeholder="{{ text_price_limits }}" />
+                            </div>
+                        </div> <br><br>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-price-class">{{ entry_price_class }}</label>
+                            <div class="col-sm-10">
+                                <input name="module_magicfilter_price_filter_class" 	id="input-price-class" value ="{{ module_magicfilter_price_filter_class }}" class="form-control" placeholder="{{ text_price_class }}" />
+                            </div>
+                        </div><br><br>
+
+
+
+                    </div>
+                   {# <?php 
+                    // over price filter
+
+                    ?>#}
+                </form>
+
+
+
+            </div>
+        </div>
+        <div class="author-creadits">{{ careated_by }}</div>
+    </div>
+</div>   
+<script>
+    $(function () {
+        show_img_status = '{{ module_magicfilter_image_status }}';
+        if (show_img_status) {
+            $('#div_width_height').show();
+        } else {
+            $('#div_width_height').hide();
+        }
+        $('#module_magicfilter_image_status').change(function () {
+            if ($('#module_magicfilter_image_status').val() == '1') {
+                $('#div_width_height').show();
+            } else {
+                $('#div_width_height').hide();
+            }
+        });
+    });
+</script> 

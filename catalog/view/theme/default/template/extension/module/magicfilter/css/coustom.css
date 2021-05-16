@@ -1,0 +1,26 @@
+/*
+  Module Name: Magic Filter
+  Description:MagicFilter plugin is one of the best product filter plugin for opencart. It has feature to filter products by
+  manufactures and price range.
+  Author: Rootingenious infotch
+  Author Email:support@rootingenious.com
+  Author URI: www.rootingenious.com
+  Version: 1.0
+  Tags: filter, magic filter, price filter, manufacture filter, brand filter,product filter
+ */
+ 
+.list-group-item.active{
+
+    color: #693f63 !important;
+    background-color: #f5f5f5 !important; 
+    border-color: #dddddd !important;
+}
+ul.front-look-li {
+    margin-top: 16px !important;
+    list-style-type: none !important;
+}
+.btn-primary {
+    height: 34px !important;
+    width: 89px !important;
+}
+

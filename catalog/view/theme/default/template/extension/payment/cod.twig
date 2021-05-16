@@ -1,0 +1,35 @@
+<h2>Оплата наличными</h2>
+<div class="well well-sm">
+{#  <p><b>{{ text_payable }}</b></p>#}
+{#  <p>{{ payable }}</p>#}
+{#  <b>{{ text_address }}</b><br />#}
+{#  <p>{{ address }}</p>#}
+  <p>Вы можете расплатиться наличными, как с случае самовывоза, так и при доставке курьером.</p>
+</div>
+<div class="buttons">
+  <div class="pull-right">
+    <input type="button" value="{{ button_confirm }}" id="button-confirm" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
+  </div>
+</div>
+<script type="text/javascript"><!--
+$('#button-confirm').on('click', function() {
+	$.ajax({
+		url: 'index.php?route=extension/payment/cod/confirm',
+		dataType: 'json',
+		beforeSend: function() {
+			$('#button-confirm').button('loading');
+		},
+		complete: function() {
+			$('#button-confirm').button('reset');
+		},
+		success: function(json) {
+			if (json['redirect']) {
+				location = json['redirect'];	
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+//--></script>

@@ -1,0 +1,352 @@
+{{ header }}{{ column_left }}
+
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                {% if license_error == null  %}
+                    <button type="submit" name="action" value="save" form="form" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i> {{ button_save }}</button>
+                    <button type="submit" name="action" value="save_and_close" form="form" data-toggle="tooltip" title="{{ button_save_and_close }}" class="btn btn-default"><i class="fa fa-save"></i> {{ button_save_and_close }}</button>
+                {% else %}
+                    <a href="{{ recheck }}" data-toggle="tooltip" title="{{ button_recheck }}"class="btn btn-primary" /><i class="fa fa-check"></i> {{ button_recheck }}</a>
+                {% endif %}
+                <a href="{{ close }}" data-toggle="tooltip" title="{{ button_close }}" class="btn btn-default"><i class="fa fa-close"></i> {{ button_close }}</a>
+            </div>
+            <img width="36" height="36" style="float:left" src="view/image/neoseo.png" alt=""/>
+            <h1>{{ heading_title_raw }} {{ text_module_version }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        {% if error_warning %}
+            <div class="alert alert-danger">
+                <i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        {% if success is defined and success %}
+            <div class="alert alert-success">
+                <i class="fa fa-check-circle"></i>
+                {{ success }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
+                    <li><a href="#tab-depth" data-toggle="tab">{{ tab_depth }}</a></li>
+                    <li><a href="#tab-courier" data-toggle="tab">{{ entry_courier_delivery_status }}</a></li>
+                    <li><a href="#tab-warehouse" data-toggle="tab">{{ entry_warehouse_delivery_status }}</a></li>
+                    <li><a href="#tab-handbook" data-toggle="tab">{{ tab_handbook }}</a></li>
+                    <li><a href="#tab-package" data-toggle="tab">{{ tab_package }}</a></li>
+                    <li><a href="#tab-tarifs" data-toggle="tab">{{ tab_tarifs }}</a></li>
+                    {% if license_error == null  %}
+                        <li><a href="#tab-logs" data-toggle="tab">{{ tab_logs }}</a></li>
+                    {% endif %}
+                    <li><a href="#tab-support" data-toggle="tab">{{ tab_support }}</a></li>
+                    <li><a href="#tab-license" data-toggle="tab">{{ tab_license }}</a></li>
+                </ul>
+
+                <form action="{{ save }}" method="post" enctype="multipart/form-data" id="form">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab-general">
+                            {% if license_error == null  %}
+                                {{ widgets.dropdown('status', {0: text_disabled, 1: text_enabled})  }}
+                                {{ widgets.input('api_key') }}
+                                {{ widgets.input('api_url') }}
+                                {{ widgets.checklist('order_status',order_statuses) }}
+                                {{ widgets.dropdown('cod_status',{0: text_disabled, 1: text_enabled}) }}
+                                {{ widgets.dropdown('cod_order_status_id',order_statuses) }}
+                                {{ widgets.dropdown('city_list_lang',{1: 'В зависимости от языка пользователя', 2: 'Русский', 3: 'Украинский'}) }}
+                                {{ widgets.input('sort_order') }}
+                                {{ widgets.dropdown('before', {0: text_disabled, 1: text_enabled})  }}
+                            {% else %}
+                                {{ license_error }}
+                            {% endif %}
+                        </div>
+                        {% if license_error == null  %}
+                            <div class="tab-pane" id="tab-depth">
+                                {{ widgets.input('min_weight') }}
+                                {{ widgets.input('min_width') }}
+                                {{ widgets.input('min_height') }}
+                                {{ widgets.input('min_depth') }}
+                                {{ widgets.dropdown('weight_class_id', weight_classes) }}
+                                {{ widgets.dropdown('length_class_id', length_classes) }}
+                            </div>
+                            <div class="tab-pane" id="tab-courier">
+                                {{ widgets.dropdown('courier_delivery_status', {0: text_disabled, 1: text_enabled}) }}
+                                {{ widgets.dropdown('courier_delivery_send_type', handbook_handbooks['service']) }}
+                                {{ widgets.dropdown('courier_delivery_pay_type', handbook_handbooks['payment']) }}
+                                {{ widgets.localeInput('courier_delivery_name', full_languages) }}
+                            </div>
+                            <div class="tab-pane" id="tab-warehouse">
+                                {{ widgets.dropdown('warehouse_delivery_status', {0: text_disabled, 1: text_enabled}) }}
+                                {{ widgets.dropdown('warehouse_delivery_send_type', handbook_handbooks['service']) }}
+                                {{ widgets.dropdown('warehouse_delivery_pay_type', handbook_handbooks['payment']) }}
+                                {{ widgets.localeInput('warehouse_delivery_name', full_languages) }}
+                            </div>
+                        <div class="tab-pane" id="tab-handbook">
+                            {{ widgets.text('cron') }}
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <td class="text-left">{{ text_name }}</td>
+                                    <td class="text-left">{{ text_last_up }}</td>
+                                    <td class="text-left">{{ text_count }}</td>
+                                    <td class="text-left">{{ text_description }}</td>
+                                </tr>
+                                </thead>
+                                {% for hd in handbook_data %}
+                                <tr>
+                                    <td class="text-left">{{ attribute(_context,'text_'~hd.id~'_name') }}</td>
+                                    <td class="text-left">{{ hd.up_date }}</td>
+                                    <td class="text-left">{{ hd['count'] }}</td>
+                                    <td class="text-left">{{ attribute(_context,'text_'~hd.id~'_description') }}</td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                            <a href="{{ uphblink }}" class="btn btn-primary">{{ text_update_handbook }}</a>
+                        </div>
+
+                        <div class="tab-pane" id="tab-package">
+                            {% if api_key == '' %}
+                            <div class="alert alert-danger">
+                                <i class="fa fa-exclamation-circle"></i> {{ text_no_api_key }}
+                            </div>
+                            {% endif %}
+                            {% if sender.sender is not defined or sender.contacts is not defined or sender.contacts == 0 %}
+                            <div class="alert alert-danger">
+                                <i class="fa fa-exclamation-circle"></i> {{ text_no_np_sender }}
+                            </div>
+                            {% endif %}
+                            <input type="hidden" name="{{ sysname }}_np_sender_ref" value="{{ sender.sender }}">
+                            {{ widgets.dropdown('np_sender_contact', sender['contacts']) }}
+                            {{ widgets.input('np_sender_phone') }}
+                            <div class="form-group" style="display: inline-block; width: 100%;">
+                                <div class="col-sm-5">
+                                    <label class="control-label" for="cityselect">{{ entry_sender_city }}</label>
+                                    <br>{{ entry_sender_city_desc }}
+                                </div>
+                                <div class="col-sm-7">
+                                    <input type="hidden" name="{{ sysname }}_sender_city" id="neoseo_novaposhta_sender_city" value="{{ sender_city }}">
+                                    <input type="text" name="cityselect" class="form-control" value="{{ cityname }}">
+
+                                </div>
+                        </div>
+                        <div class="form-group" style="display: inline-block; width: 100%;">
+                            <div class="col-sm-5">
+                                <label class="control-label" for="{{ sysname }}sender_warehouse">{{ entry_sender_warehouse }}</label>
+                                <br>{{ entry_sender_warehouse_desc }}
+                            </div>
+                            <div class="col-sm-7">
+                                <select name="{{ sysname }}_sender_warehouse" id="{{ sysname }}_sender_warehouse" class="form-control">
+                                    {% for warehouse in warehouses %}
+                                        {% if warehouse.ref == sender_warehouse %}
+                                        <option value="{{ warehouse.ref }}" selected="selected">{{ warehouse.descriptionru }}</option>
+                                        {% else %}
+                                        <option value="{{ warehouse.ref }}">{{ warehouse.descriptionru }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                             {{ widgets.dropdown('package_type', handbook_handbooks['cargo']) }}
+                             {{ widgets.dropdown('payer',handbook_handbooks['payer']) }}
+                             {{ widgets.dropdown('delivery_day', {0 : text_p0day, 1 : text_p1day, 2 : text_p2day, 3 : text_p3day}) }}
+                             {{ widgets.input('description') }}
+                    </div>
+
+                    <div class="tab-pane" id="tab-tarifs">
+                        {{ widgets.input('add_tax') }}
+                        {{ widgets.dropdown('use_custom_cost', {0: text_disabled, 1: text_enabled}) }}
+                        {{ widgets.dropdown('custom_cost_type', {0: text_by_weight, 1: text_by_total}) }}
+                        <table id="wt-table" class="table table-striped table-bordered table-hover" style="{% if current_cost_type == 1 %}display:none;{% endif %}">
+                            <thead>
+                            <tr>
+                                <td class="text-left" style="width: 200px;">{{ text_weight }}</td>
+                                <td class="text-left">{{ text_price_for}}{{ text_warehouse_shipping }}</td>
+                                <td class="text-left">{{ text_price_for}}{{ text_courier_shipping }}</td>
+                                <td class="text-left" style="width: 50px;">&nbsp;</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% set wt_row = 0 %}
+                            {% for wt in weigh_table %}
+                            <tr id="tw-row{{ wt_row }}">
+                                <td><input type="text" class="form-control" name="{{ sysname }}_custom_costs[{{ wt_row }}][weight]" value="{{ wt.weight }}"></td>
+                                <td><input type="text" class="form-control" name="{{ sysname }}_custom_costs[{{ wt_row }}][warehouse]" value="{{ wt.warehouse }}"></td>
+                                <td><input type="text" class="form-control" name="{{ sysname }}_custom_costs[{{ wt_row }}][courier]" value="{{ wt.courier }}"></td>
+                                <td class="text-left"><button type="button" onclick="$('#tw-row{{ wt_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+                            </tr>
+                            {% set wt_row = wt_row + 1 %}
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="3"></td>
+                                <td class="text-left"><button type="button" onclick="addrow();" data-toggle="tooltip" title="{{ text_add }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button></td>
+                            </tr>
+                            </tfoot>
+                        </table>
+
+                        <table id="wtt-table" class="table table-striped table-bordered table-hover" style="{% if current_cost_type == 0 %}display:none;{% endif %}">
+                            <thead>
+                            <tr>
+                                <td class="text-left" style="width: 200px;">{{ text_total }}</td>
+                                <td class="text-left">{{ text_price_for}}{{ text_warehouse_shipping }}</td>
+                                <td class="text-left">{{ text_price_for}}{{ text_courier_shipping }}</td>
+                                <td class="text-left" style="width: 50px;">&nbsp;</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% set wtt_row = 0 %}
+                            {% for wtt in totals_table %}
+                                <tr id="ttw-row{{ wtt_row }}">
+                                    <td><input type="text" class="form-control" name="{{ sysname }}_custom_costs_total[{{ wtt_row }}][total]" value="{{ wtt.total }}"></td>
+                                    <td><input type="text" class="form-control" name="{{ sysname }}_custom_costs_total[{{ wtt_row }}][warehouse]" value="{{ wtt.warehouse }}"></td>
+                                    <td><input type="text" class="form-control" name="{{ sysname }}_custom_costs_total[{{ wtt_row }}][courier]" value="{{ wtt.courier }}"></td>
+                                    <td class="text-left"><button type="button" onclick="$('#ttw-row{{ wt_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+                                </tr>
+                                {% set wtt_row = wtt_row + 1 %}
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="3"></td>
+                                <td class="text-left"><button type="button" onclick="addrowt();" data-toggle="tooltip" title="{{ text_add }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button></td>
+                            </tr>
+                            </tfoot>
+                        </table>
+
+                    </div>
+                            <div class="tab-pane" id="tab-logs">
+                                {{ widgets.debug_download_logs('debug', {0: text_disabled, 1: text_enabled}, clear, download, button_clear_log, button_download_log)  }}
+                                <textarea style="width: 100%; height: 300px; padding: 5px; border: 1px solid #CCCCCC; background: #FFFFFF; overflow: scroll;">{{ logs }}</textarea>
+                            </div>
+                        {% endif %}
+                        <div class="tab-pane" id="tab-support">
+                            {{ mail_support }}
+                        </div>
+                        <div class="tab-pane" id="tab-license">
+                            {{ module_licence }}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript"><!--
+    var wt_row = {{ wt_row }};
+    function addrow()
+    {
+        html = '<tr id="tw-row'+wt_row+'">';
+        html += '<td><input type="text" class="form-control" name="{{ sysname }}_custom_costs['+wt_row+'][weight]" value=""></td>';
+        html += '<td><input type="text" class="form-control" name="{{ sysname }}_custom_costs['+wt_row+'][warehouse]" value=""></td>';
+        html += '<td><input type="text" class="form-control" name="{{ sysname }}_custom_costs['+wt_row+'][courier]" value=""></td>';
+        html += '<td class="text-left"><button type="button" onclick="$(\'#tw-row'+wt_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+        html += '</tr>';
+        $('#wt-table tbody').append(html);
+        wt_row++;
+    }
+
+    var wtt_row = {{ wtt_row }};
+    function addrowt()
+    {
+        html = '<tr id="ttw-row'+wtt_row+'">';
+        html += '<td><input type="text" class="form-control" name="{{ sysname }}_custom_costs_total['+wtt_row+'][total]" value=""></td>';
+        html += '<td><input type="text" class="form-control" name="{{ sysname }}_custom_costs_total['+wtt_row+'][warehouse]" value=""></td>';
+        html += '<td><input type="text" class="form-control" name="{{ sysname }}_custom_costs_total['+wtt_row+'][courier]" value=""></td>';
+        html += '<td class="text-left"><button type="button" onclick="$(\'#ttw-row'+wtt_row + '\').remove();" data-toggle="tooltip" title="<?php echo $button_remove; ?>" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+        html += '</tr>';
+        $('#wtt-table tbody').append(html);
+        wtt_row++;
+    }
+
+    $('#{{ sysname }}_custom_cost_type').on('change',function () {
+        //alert($(this).val())
+        if($(this).val() == 1){
+            $('#wt-table').hide();
+            $('#wtt-table').show();
+        } else {
+            $('#wtt-table').hide();
+            $('#wt-table').show();
+        }
+    });
+
+    $('input[name=\'cityselect\']').autocomplete({
+        'source': function(request, response) {
+            $.ajax({
+                url: 'index.php?route=extension/shipping/{{ sysname }}/cityautocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
+                dataType: 'json',
+                success: function(json) {
+                    response($.map(json, function(item) {
+                        return {
+                            label: item['name'],
+                            value: item['id'],
+                        }
+                    }));
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                }
+            });
+        },
+        'select': function(item) {
+            $(this).val(item['label']);
+            $('input[name="{{ sysname }}_sender_city"]').val(item['value']);
+            $('#{{ sysname }}_sender_warehouse').load('index.php?route=extension/shipping/{{ sysname }}/warehouseAutocomplete&city_ref=' + item['value'] + '&user_token={{ user_token }}');
+
+        }
+    });
+
+
+
+    if (window.location.hash.indexOf('#tab') == 0 && $("[href=" + window.location.hash + "]").length) {
+        $(".panel-body > .nav-tabs li").removeClass("active");
+        $("[href=" + window.location.hash + "]").parents('li').addClass("active");
+        $(".panel-body:first .tab-content:first .tab-pane:first").removeClass("active");
+        $(window.location.hash).addClass("active");
+    }
+    $(".nav-tabs li a").click(function () {
+        var url = $(this).prop('href');
+        window.location.hash = url.substring(url.indexOf('#'));
+    });
+
+    // Специальный фикс системной функции, поскольку даниель понятия не имеет о том что в url может быть еще и hash
+    // и по итогу этот hash становится частью user_token
+    function getURLVar(key) {
+        var value = [];
+
+        var url = String(document.location);
+        if( url.indexOf('#') != -1 ) {
+            url = url.substring(0, url.indexOf('#'));
+        }
+        var query = url.split('?');
+
+        if (query[1]) {
+            var part = query[1].split('&');
+
+            for (i = 0; i < part.length; i++) {
+                var data = part[i].split('=');
+
+                if (data[0] && data[1]) {
+                    value[data[0]] = data[1];
+                }
+            }
+
+            if (value[key]) {
+                return value[key];
+            } else {
+                return '';
+            }
+        }
+    }
+    //--></script>
+{{ footer }}

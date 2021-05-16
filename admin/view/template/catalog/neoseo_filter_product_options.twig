@@ -1,0 +1,29 @@
+{% for option in options %}
+    <div style="display: inline-block; width: 100%; margin-bottom: 10px;">
+
+        <label class="control-label col-sm-2" for="option_{{ option.option_id }}">{{ option.name }}</label>
+        <div class="col-sm-10">
+            <select name="filter_option[{{ option.option_id }}][]"
+                    id="option_{{ option.option_id }}"
+                    class="form-control"
+                    multiple="multiple"
+            >
+                {% for value, value_data in option.values %}
+                    {% if value_data.selected %}
+                        <option value="{{ value }}" selected="selected">{{ value_data.name }}</option>
+                    {% else %}
+                        <option value="{{ value }}">{{ value_data.name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <script>
+                $("#option_{{ option.option_id }}").multiselect({
+                    nonSelectedText: '',
+                    nSelectedText: 'выбрано',
+                    allSelectedText: 'Все',
+                });
+            </script>
+        </div>
+    </div>
+{% endfor %}
+

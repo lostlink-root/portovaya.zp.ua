@@ -1,0 +1,119 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" form="form-salesdrive" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+            <h1>{{ heading_title }}</h1>
+            <ul class="breadcrumb">
+            {% for breadcrumb in breadcrumbs %}
+            <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        {% if error_warning %}
+        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+         {% endif %}
+        {% if success %}
+        <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+         {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+            </div>
+            <div class="panel-body">
+                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-salesdrive" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-name">{{ entry_domain }}</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="module_salesdrive_domain" value="{{ module_salesdrive_domain }}" placeholder="{{ entry_domain }}" id="input-domain" class="form-control" />
+                            {% if error_domain %}
+                            <div class="text-danger">{{ error_domain }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-limit">{{ entry_key }}</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="module_salesdrive_key" value="{{ module_salesdrive_key }}" placeholder="{{ entry_key }}" id="input-key" class="form-control" />
+                            {% if error_key %}
+                            <div class="text-danger">{{ error_key }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+                        <div class="col-sm-10">
+                            <select name="module_salesdrive_status" id="input-status" class="form-control">
+                                {% if module_salesdrive_status %}
+                                <option value="1" selected="selected">{{ text_enabled }}</option>
+                                <option value="0">{{ text_disabled }}</option>
+                                {% else %}
+                                <option value="1">{{ text_enabled }}</option>
+                                <option value="0" selected="selected">{{ text_disabled }}</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+					{% if module_salesdrive_domain %}
+					<!--div class="text-center"><a href="{{ synchronize }}" data-toggle="tooltip" title="{{ button_synchronize }}" class="btn btn-default"><i class="fa fa-refresh"></i> {{ button_synchronize }}</a></div-->
+
+                   <div class="text-center"><div class="btn btn-default" id="fca-import-order"><i class="fa fa-refresh"></i> {{ button_synchronize }}</div></div>
+					<script src="view/javascript/salesdrive/sync.js"></script>
+					<link type="text/css" href="view/javascript/salesdrive/sync.css" rel="stylesheet" media="screen" />
+					<div>&nbsp;</div>
+					<div id="importProductsUrl" style="display: none">{{ synchronize }}</div>
+					<div class="fca_ajax_result" style="display: none">Экспортировано товаров: <span id="currentOffset">0</span>. Создано товаров с учетом вариаций: <span id="variationCount">0</span>. Время выполнения: <span id="timeElapsed">0</span>. <span id="sd-finish" style="display: none">ЗАВЕРШЕНО!</span></div>
+					<div id="fc_api_project_box">
+						<div class="fca_preloader">
+							<div>Товары и категории экспортируются. Не закрывайте браузер до завершения экспорта.</div>
+							<div class="lds-default">
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+							</div>
+						</div>
+					</div>
+
+					{% endif %}
+                    <h3 style="margin-top: 20px;">{{ heading_stock_import }}</h3>
+					<div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-feed">{{ entry_feed }}</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="module_salesdrive_feed" value="{{ module_salesdrive_feed }}" placeholder="{{ entry_feed }}" id="input-feed" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input_gen">{{ entry_gen }}</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="module_salesdrive_gen" value="{{ module_salesdrive_gen }}" id="input_gen" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input_gen">{{ entry_cron }}</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="module_salesdrive_gen" value="curl {{ module_salesdrive_gen }}" id="input_gen" class="form-control" disabled />
+                        </div>
+                    </div>
+                </form>
+            </div>            
+        </div>
+    </div>
+</div>
+{{ footer }}

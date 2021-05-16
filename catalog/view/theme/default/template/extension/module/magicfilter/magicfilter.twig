@@ -1,0 +1,176 @@
+<!-- 
+
+  Module Name: Magic Filter
+  Description:MagicFilter plugin is one of the best product filter plugin for opencart. It has feature to filter products by
+  manufactures and price range.
+  Author: Rootingenious infotch
+  Author Email:support@rootingenious.com
+  Author URI: www.rootingenious.com
+  Version: 3.0.0.0
+  Tags: filter, magic filter, price filter, manufacture filter, brand filter,product filter
+
+-->
+
+<input type="hidden" id="manu_status" name="manu_status" value="{{ module_manufacturer_status }}">
+<input type="hidden" id="pri_status" name="pri_status" value="{{ module_price_filter_status }}">
+
+{% set style_display="style='display:none;'" %}                          
+<div class = "panel panel-default"  {% if  module_manufacturer_status is defined and module_manufacturer_status == 0  %}  style ='display: none;' {% endif %}     >  
+    <div class="list-group">
+        <span class="list-group-item active">{{ module_magicfilter_heading }}</span>
+        <ul class="front-look-li">
+
+            {% for manufacturer in manufacturers %}
+
+                {%  set  man_id = 0 %}
+                {% if product_man_list[manufacturer.manufacturer_id] %}
+                    {% set  man_id = product_man_list[manufacturer.manufacturer_id]  %}
+                {% endif%}
+                <li>
+
+                    <input type='checkbox' class="magiccheckbox" id='chk_man_id_{{ manufacturer.manufacturer_id }}' name='chk_man_id_{{ manufacturer.manufacturer_id }}' data-man-id='{{ man_id }}'/>
+                    {% if  module_magicfilter_image_status == 1 %}
+                        <img src="{{ manufacturer.image }}" width="{{ module_magicfilter_image_width }}" height="{{ module_magicfilter_image_height }}">
+
+
+                    {% endif %}
+                    {{ manufacturer.name }}
+                </li>
+            {% endfor %}
+      
+        </ul>
+    </div>
+
+</div>
+
+
+<div class="box sidebarFilter panel panel-default" {% if module_price_filter_status is defined and module_price_filter_status == 0  %} style ='display: none;' {% endif %} >
+    <div class="panel-heading">{{ heading_title }}</div>
+    <div class="list-group">
+        <div class="list-group-item">
+            <div id="filter-group1">
+                <div id="scale-slider"></div>
+            </div>
+        </div>
+    </div>		
+
+</div>
+<div class="panel-footer text-right" {% if  module_manufacturer_status is defined and module_manufacturer_status == 0 and  module_price_filter_status is defined and module_price_filter_status == 0  %} style ='display: none;' {% endif %}>
+    <button type="button" id="button-price-filter" class="btn btn-primary">{{ button_filter }} {{round.price_range_min}}</button>
+</div>
+
+
+<script type="text/javascript">
+    var manu_status = "{{ manufacturer_status }}"
+            var price_status = "{{ price_filter_status }}"
+
+
+            $("#scale-slider")
+            .slider({
+            min: {{price_range_min}} ,
+                    max: {{ price_range_max }} ,
+                    range: true,
+                    values: [ {{ price_range[0] ? price_range[0]:0 }} ,  {{ price_range[1] ? price_range[1]:price_range_max }} ]
+            })
+
+
+            .slider("pips", {
+            rest: false,
+    {% if  right_code %}
+                                        prefix: "{{ price_code }}"
+    {% else %}
+                                           suffix: "{{ price_code }}"
+    {% endif %}
+                         })
+
+                         .slider("float");
+                 (function($) {
+                 $(function() {
+                 function runmagicfilter(){
+                 priceRange = [];
+                 $('#scale-slider .ui-slider-tip').each(function(){
+                 priceRange.push($(this).html());
+                 });
+                 var producttoset = [];
+                 $('.magiccheckbox').each(function(){
+                 var productsplit = [];
+                 if ($(this).is(':checked')){
+                 if ($(this).data('man-id') != ''){
+                 productsplit = $(this).data('man-id').toString().split('_');
+                 if (productsplit.length > 0){
+                 $(productsplit).each(function(prodindex, productvalue){
+                 producttoset.push(productvalue);
+                 });
+                 }
+                 }
+                 }
+                 });
+                 $('.{{ product_class }}').hide();
+                 $('.clearfix').remove();
+                 $('.{{ product_class }}').each(function(){
+                 var product_id = 0;
+                 var product_str = '';
+                 product_str = $(this).find('a').attr('href');
+                 product_str = product_str.substring(product_str.indexOf('product_id='));
+                 product_str = product_str.replace('product_id=', '');
+                 product_id = product_str;
+                 if ($(this).find(".price span.price-new").length) {
+                 var price = $(this).find(".price span.price-new").html().replace('{{ price_code }}', '').replace(',', '');
+                 } else {
+                 var text = $(this).find('.price').html().replace('{{ price_code }}', '');
+                 if ($(this).find(".price span").length) {
+                 var price = text.substring(0, text.indexOf('<span')).replace(',', '');
+                 } else {
+                 var price = text.replace(',', '');
+                 }
+                 }
+                 var price_flg = 0;
+                 var man_flg = 0;
+                 price = price.replace(/[^\d.]/g, '');
+                 price = parseInt(price);
+                 if ($('#pri_status').val() === '1'){
+
+                 if (!isNaN(price) && (price > priceRange[0] && price < priceRange[1])){
+                 $(this).fadeIn("slow");
+                 price_flg = 1;
+                 }
+                 }
+                 if ($('#manu_status').val() === '1'){
+
+                 if (producttoset.length > 0){
+                 if ($.inArray(product_id, producttoset) == - 1){
+                 $(this).hide();
+                 } else{
+                 $(this).fadeIn("slow");
+                 man_flg = 1;
+                 }
+                 }
+                 else{
+                 man_flg = 1;
+                 }
+                 }
+                 if ($('#pri_status').val() === '1' && $('#manu_status').val() === '1'){
+                 if (price_flg == '1' && man_flg == '1'){
+                 $(this).fadeIn("slow");
+                 }
+
+
+                 else{
+                 $(this).hide();
+                 }
+
+                 }
+
+
+
+
+                 });
+                 }
+                 $('#button-price-filter').on('click', function() {
+                 runmagicfilter();
+                 });
+                 });
+                 })(jQuery);
+
+</script>
+
